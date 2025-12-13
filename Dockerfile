@@ -1,16 +1,13 @@
-FROM node:18-alpine
+FROM node:18
 
-# Create working directory
 WORKDIR /app
 
-# Install a tiny static server
+# Install a simple static server
 RUN npm install -g serve
 
-# Copy your HTML, CSS, JS files into container
+# Copy your files
 COPY . .
 
-# Expose port
 EXPOSE 3000
 
-# Run static website
 CMD ["serve", ".", "-l", "3000"]
