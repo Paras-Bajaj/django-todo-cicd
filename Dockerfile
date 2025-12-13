@@ -1,14 +1,16 @@
-# Use lightweight NGINX image
-FROM nginx:alpine
+FROM node:18-alpine
 
-# Remove default NGINX html files
-RUN rm -rf /usr/share/nginx/html/*
+# Create working directory
+WORKDIR /app
 
-# Copy your HTML/CSS/JS website into the container
-COPY . /usr/share/nginx/html
+# Install a tiny static server
+RUN npm install -g serve
 
-# Expose port 80 where NGINX will serve your website
-EXPOSE 80
+# Copy your HTML, CSS, JS files into container
+COPY . .
 
-# Start NGINX in foreground (required for Docker)
-CMD ["nginx", "-g", "daemon off;"]
+# Expose port
+EXPOSE 3000
+
+# Run static website
+CMD ["serve", ".", "-l", "3000"]
