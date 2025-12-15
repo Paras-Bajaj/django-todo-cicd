@@ -1,1 +1,1 @@
-# django-todo-cicd
+# todo-cicd
