@@ -5,78 +5,314 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ultimate Professional Todo App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     
     <style>
         :root {
             --primary: #3b82f6;
             --primary-dark: #2563eb;
+            --primary-light: #dbeafe;
             --danger: #ef4444;
+            --danger-light: #fee2e2;
             --success: #10b981;
+            --success-light: #d1fae5;
             --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --info: #8b5cf6;
+            --info-light: #ede9fe;
+            
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-hover: #f1f5f9;
+            
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            
+            --border-color: #e2e8f0;
+            --border-radius: 0.75rem;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+            
+            --transition: all 0.3s ease;
+        }
+        
+        .dark-mode {
+            --primary: #60a5fa;
+            --primary-dark: #3b82f6;
+            --primary-light: #1e3a8a;
+            --danger: #f87171;
+            --danger-light: #7f1d1d;
+            --success: #34d399;
+            --success-light: #064e3b;
+            --warning: #fbbf24;
+            --warning-light: #78350f;
+            --info: #a78bfa;
+            --info-light: #4c1d95;
+            
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            
+            --border-color: #334155;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            transition: background-color 0.3s, color 0.3s;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-        
-        .task-item {
-            transition: all 0.2s ease;
-        }
-        
-        .task-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-        
-        .dragging {
-            opacity: 0.5;
-            transform: rotate(2deg);
-        }
-        
-        .dropzone {
-            border: 2px dashed #cbd5e1;
-            border-radius: 0.5rem;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: var(--transition);
+            min-height: 100vh;
             padding: 1rem;
-            text-align: center;
-            color: #64748b;
-            transition: all 0.3s;
         }
         
-        .dropzone.drag-over {
-            border-color: var(--primary);
-            background-color: rgba(59, 130, 246, 0.05);
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
         }
         
-        .priority-low { border-left: 4px solid #10b981; }
-        .priority-medium { border-left: 4px solid #f59e0b; }
-        .priority-high { border-left: 4px solid #ef4444; }
-        
-        .completed-task {
-            opacity: 0.8;
-            background-color: #f8fafc !important;
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-weight: 700;
+            line-height: 1.2;
         }
         
-        .dark .completed-task {
-            background-color: #334155 !important;
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.25rem;
         }
         
-        .animate-pulse-slow {
-            animation: pulse 2s infinite;
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
         }
         
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
+        h3 {
+            font-size: 1.25rem;
+        }
+        
+        p {
+            color: var(--text-secondary);
+        }
+        
+        .text-sm {
+            font-size: 0.875rem;
+        }
+        
+        .text-xs {
+            font-size: 0.75rem;
+        }
+        
+        .font-bold {
+            font-weight: 700;
+        }
+        
+        .font-medium {
+            font-weight: 500;
+        }
+        
+        /* Header Styles */
+        .header {
+            margin-bottom: 2rem;
+        }
+        
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .header-content {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo-icon {
+            padding: 0.5rem;
+            background-color: var(--primary-light);
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-icon i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        /* Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+            font-size: 0.875rem;
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background-color: var(--bg-hover);
+            color: var(--text-primary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+        }
+        
+        .btn-success {
+            background-color: var(--success-light);
+            color: var(--success);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-light);
+            color: var(--danger);
+        }
+        
+        .btn-info {
+            background-color: var(--info-light);
+            color: var(--info);
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-light);
+            color: var(--warning);
+        }
+        
+        .btn-icon {
+            padding: 0.75rem;
+            border-radius: var(--border-radius);
+        }
+        
+        /* Card Styles */
+        .card {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Layout */
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        @media (min-width: 1024px) {
+            .grid-cols-3 {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-card {
+            background-color: var(--bg-hover);
+            border-radius: var(--border-radius);
+            padding: 0.75rem;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        .stat-blue .stat-value {
+            color: var(--primary);
+        }
+        
+        .stat-green .stat-value {
+            color: var(--success);
+        }
+        
+        .stat-purple .stat-value {
+            color: var(--info);
+        }
+        
+        .stat-amber .stat-value {
+            color: var(--warning);
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 1rem;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
         }
         
         .progress-bar {
             height: 6px;
             border-radius: 3px;
             overflow: hidden;
-            background-color: #e2e8f0;
+            background-color: var(--border-color);
         }
         
         .progress-fill {
@@ -85,8 +321,319 @@
             transition: width 0.5s ease;
         }
         
-        .dark .progress-bar {
-            background-color: #475569;
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            gap: 0.75rem;
+        }
+        
+        @media (min-width: 768px) {
+            .form-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Task List */
+        .task-list {
+            list-style: none;
+        }
+        
+        .task-item {
+            background-color: var(--bg-hover);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+        }
+        
+        .task-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .task-item.dragging {
+            opacity: 0.5;
+            transform: rotate(2deg);
+        }
+        
+        .task-item.priority-low {
+            border-left-color: var(--success);
+        }
+        
+        .task-item.priority-medium {
+            border-left-color: var(--warning);
+        }
+        
+        .task-item.priority-high {
+            border-left-color: var(--danger);
+        }
+        
+        .task-item.completed {
+            opacity: 0.8;
+            background-color: var(--bg-primary);
+        }
+        
+        .task-content {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+        
+        .task-main {
+            display: flex;
+            align-items: flex-start;
+            flex: 1;
+        }
+        
+        .task-checkbox {
+            margin-right: 0.75rem;
+            margin-top: 0.25rem;
+        }
+        
+        .task-checkbox input {
+            width: auto;
+        }
+        
+        .task-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .task-title.completed {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+        }
+        
+        .task-details {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .task-priority {
+            font-size: 0.75rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 999px;
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        .task-status {
+            font-size: 0.75rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 999px;
+            background-color: var(--success-light);
+            color: var(--success);
+        }
+        
+        .task-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .task-action-btn {
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .task-action-btn:hover {
+            background-color: var(--bg-hover);
+            color: var(--text-primary);
+        }
+        
+        .edit-btn:hover {
+            color: var(--primary);
+        }
+        
+        .delete-btn:hover {
+            color: var(--danger);
+        }
+        
+        /* Filter Buttons */
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--border-radius);
+            background-color: var(--bg-hover);
+            color: var(--text-secondary);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.875rem;
+        }
+        
+        .filter-btn.active {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        /* Search Box */
+        .search-container {
+            position: relative;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+        
+        .search-input {
+            padding-left: 2.5rem;
+        }
+        
+        /* Dropzone */
+        .dropzone {
+            border: 2px dashed var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            text-align: center;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            margin-bottom: 1rem;
+        }
+        
+        .dropzone.drag-over {
+            border-color: var(--primary);
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+        
+        .dropzone i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 2.5rem 1rem;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--border-color);
+            margin-bottom: 1rem;
+        }
+        
+        /* Instructions */
+        .instructions-list {
+            list-style: none;
+        }
+        
+        .instructions-list li {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .instructions-list i {
+            margin-top: 0.125rem;
+            margin-right: 0.5rem;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .footer a {
+            color: var(--danger);
+            text-decoration: none;
+            margin-left: 0.5rem;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Utility Classes */
+        .flex {
+            display: flex;
+        }
+        
+        .items-center {
+            align-items: center;
+        }
+        
+        .justify-between {
+            justify-content: space-between;
+        }
+        
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+        
+        .mr-2 {
+            margin-right: 0.5rem;
+        }
+        
+        .ml-2 {
+            margin-left: 0.5rem;
+        }
+        
+        .mt-1 {
+            margin-top: 0.25rem;
+        }
+        
+        .hidden {
+            display: none !important;
         }
         
         /* Toast customization */
@@ -94,72 +641,96 @@
         .toast-error { background-color: var(--danger) !important; }
         .toast-info { background-color: var(--primary) !important; }
         .toast-warning { background-color: var(--warning) !important; }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .task-content {
+                flex-direction: column;
+            }
+            
+            .task-actions {
+                margin-top: 0.75rem;
+                align-self: flex-end;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
     </style>
 </head>
 
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen p-4 md:p-6">
-    <div class="max-w-5xl mx-auto">
+<body>
+    <div class="container">
         <!-- HEADER -->
-        <header class="mb-8">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                            <i class="fas fa-tasks text-2xl text-blue-600 dark:text-blue-300"></i>
-                        </div>
-                        <div>
-                            <h1 class="text-3xl font-bold">Ultimate Todo Pro</h1>
-                            <p class="text-slate-600 dark:text-slate-400">Professional Task Manager for Maximum Productivity</p>
-                        </div>
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div>
+                        <h1>Ultimate Todo Pro</h1>
+                        <p>Professional Task Manager for Maximum Productivity</p>
                     </div>
                 </div>
                 
-                <div class="flex items-center gap-3">
-                    <button id="exportBtn" class="px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 transition">
-                        <i class="fas fa-file-export mr-2"></i>Export
+                <div class="header-actions">
+                    <button id="exportBtn" class="btn btn-secondary">
+                        <i class="fas fa-file-export"></i>Export
                     </button>
-                    <button id="importBtn" class="px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 transition">
-                        <i class="fas fa-file-import mr-2"></i>Import
+                    <button id="importBtn" class="btn btn-secondary">
+                        <i class="fas fa-file-import"></i>Import
                     </button>
                     <input type="file" id="importFile" class="hidden" accept=".json">
-                    <button id="themeToggle" class="p-3 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 transition">
+                    <button id="themeToggle" class="btn btn-icon btn-secondary">
                         <i id="themeIcon" class="fas fa-moon"></i>
                     </button>
                 </div>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-3">
             <!-- LEFT PANEL: Stats & Progress -->
-            <div class="lg:col-span-1 space-y-6">
+            <div class="left-panel">
                 <!-- STATS -->
-                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-5">
-                    <h2 class="text-xl font-bold mb-4 flex items-center">
-                        <i class="fas fa-chart-bar mr-2 text-blue-500"></i> Task Overview
+                <div class="card">
+                    <h2 class="flex items-center">
+                        <i class="fas fa-chart-bar mr-2" style="color: var(--primary);"></i> Task Overview
                     </h2>
                     
-                    <div class="grid grid-cols-2 gap-3 mb-4">
-                        <div class="bg-blue-50 dark:bg-slate-700 rounded-lg p-3">
-                            <div class="text-2xl font-bold text-blue-600 dark:text-blue-300" id="total">0</div>
-                            <div class="text-sm text-slate-600 dark:text-slate-400">Total Tasks</div>
+                    <div class="stats-grid">
+                        <div class="stat-card stat-blue">
+                            <div class="stat-value" id="total">0</div>
+                            <div class="stat-label">Total Tasks</div>
                         </div>
-                        <div class="bg-green-50 dark:bg-slate-700 rounded-lg p-3">
-                            <div class="text-2xl font-bold text-green-600 dark:text-green-300" id="active">0</div>
-                            <div class="text-sm text-slate-600 dark:text-slate-400">Active</div>
+                        <div class="stat-card stat-green">
+                            <div class="stat-value" id="active">0</div>
+                            <div class="stat-label">Active</div>
                         </div>
-                        <div class="bg-purple-50 dark:bg-slate-700 rounded-lg p-3">
-                            <div class="text-2xl font-bold text-purple-600 dark:text-purple-300" id="done">0</div>
-                            <div class="text-sm text-slate-600 dark:text-slate-400">Completed</div>
+                        <div class="stat-card stat-purple">
+                            <div class="stat-value" id="done">0</div>
+                            <div class="stat-label">Completed</div>
                         </div>
-                        <div class="bg-amber-50 dark:bg-slate-700 rounded-lg p-3">
-                            <div class="text-2xl font-bold text-amber-600 dark:text-amber-300" id="highPriority">0</div>
-                            <div class="text-sm text-slate-600 dark:text-slate-400">High Priority</div>
+                        <div class="stat-card stat-amber">
+                            <div class="stat-value" id="highPriority">0</div>
+                            <div class="stat-label">High Priority</div>
                         </div>
                     </div>
                     
                     <!-- Progress Bar -->
-                    <div class="mt-4">
-                        <div class="flex justify-between text-sm mb-1">
+                    <div class="progress-container">
+                        <div class="progress-header">
                             <span>Completion Progress</span>
                             <span id="progressPercent">0%</span>
                         </div>
@@ -170,49 +741,49 @@
                 </div>
                 
                 <!-- QUICK ACTIONS -->
-                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-5">
-                    <h2 class="text-xl font-bold mb-4 flex items-center">
-                        <i class="fas fa-bolt mr-2 text-amber-500"></i> Quick Actions
+                <div class="card">
+                    <h2 class="flex items-center">
+                        <i class="fas fa-bolt mr-2" style="color: var(--warning);"></i> Quick Actions
                     </h2>
                     
-                    <div class="grid grid-cols-2 gap-3">
-                        <button id="clearDone" class="p-3 rounded-lg bg-red-50 dark:bg-slate-700 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-slate-600 transition flex items-center justify-center">
-                            <i class="fas fa-trash mr-2"></i> Clear Completed
+                    <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: 0.75rem;">
+                        <button id="clearDone" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Clear Completed
                         </button>
-                        <button id="markAllBtn" class="p-3 rounded-lg bg-green-50 dark:bg-slate-700 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-slate-600 transition flex items-center justify-center">
-                            <i class="fas fa-check-double mr-2"></i> Mark All Done
+                        <button id="markAllBtn" class="btn btn-success">
+                            <i class="fas fa-check-double"></i> Mark All Done
                         </button>
-                        <button id="addSampleBtn" class="p-3 rounded-lg bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-slate-600 transition flex items-center justify-center col-span-2">
-                            <i class="fas fa-plus-circle mr-2"></i> Add Sample Tasks
+                        <button id="addSampleBtn" class="btn btn-info" style="grid-column: span 2;">
+                            <i class="fas fa-plus-circle"></i> Add Sample Tasks
                         </button>
                     </div>
                 </div>
                 
                 <!-- INSTRUCTIONS -->
-                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-5">
-                    <h2 class="text-xl font-bold mb-4 flex items-center">
-                        <i class="fas fa-info-circle mr-2 text-slate-500"></i> How to Use
+                <div class="card">
+                    <h2 class="flex items-center">
+                        <i class="fas fa-info-circle mr-2" style="color: var(--text-secondary);"></i> How to Use
                     </h2>
                     
-                    <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
-                        <li class="flex items-start">
-                            <i class="fas fa-mouse-pointer mt-1 mr-2 text-blue-500"></i>
+                    <ul class="instructions-list">
+                        <li>
+                            <i class="fas fa-mouse-pointer" style="color: var(--primary);"></i>
                             <span>Drag tasks to reorder them</span>
                         </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-edit mt-1 mr-2 text-green-500"></i>
+                        <li>
+                            <i class="fas fa-edit" style="color: var(--success);"></i>
                             <span>Click the edit icon to modify a task</span>
                         </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-filter mt-1 mr-2 text-purple-500"></i>
+                        <li>
+                            <i class="fas fa-filter" style="color: var(--info);"></i>
                             <span>Use filters to view specific tasks</span>
                         </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-search mt-1 mr-2 text-amber-500"></i>
+                        <li>
+                            <i class="fas fa-search" style="color: var(--warning);"></i>
                             <span>Search through all your tasks</span>
                         </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-download mt-1 mr-2 text-red-500"></i>
+                        <li>
+                            <i class="fas fa-download" style="color: var(--danger);"></i>
                             <span>Export/Import your tasks as JSON</span>
                         </li>
                     </ul>
@@ -220,28 +791,26 @@
             </div>
             
             <!-- RIGHT PANEL: Main Todo Interface -->
-            <div class="lg:col-span-2 space-y-6">
+            <div class="right-panel">
                 <!-- ADD TODO -->
-                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-5">
-                    <h2 class="text-xl font-bold mb-4">Add New Task</h2>
+                <div class="card">
+                    <h2>Add New Task</h2>
                     
-                    <form id="todoForm" class="space-y-3">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div class="md:col-span-2">
-                                <label for="text" class="block text-sm font-medium mb-1">Task Description *</label>
-                                <input id="text" required placeholder="What needs to be done?" 
-                                    class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"/>
+                    <form id="todoForm">
+                        <div class="form-row mb-4">
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="text">Task Description *</label>
+                                <input id="text" required placeholder="What needs to be done?" />
                             </div>
                             
-                            <div>
-                                <label for="date" class="block text-sm font-medium mb-1">Due Date</label>
-                                <input id="date" type="date"
-                                    class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"/>
+                            <div class="form-group">
+                                <label for="date">Due Date</label>
+                                <input id="date" type="date" />
                             </div>
                             
-                            <div>
-                                <label for="priority" class="block text-sm font-medium mb-1">Priority</label>
-                                <select id="priority" class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                            <div class="form-group">
+                                <label for="priority">Priority</label>
+                                <select id="priority">
                                     <option value="Low">Low</option>
                                     <option value="Medium" selected>Medium</option>
                                     <option value="High">High</option>
@@ -250,71 +819,70 @@
                         </div>
                         
                         <div class="flex justify-between items-center">
-                            <div class="text-sm text-slate-500">
-                                Press <kbd class="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded">Enter</kbd> to add
+                            <div class="text-sm" style="color: var(--text-secondary);">
+                                Press <kbd style="padding: 0.125rem 0.5rem; background-color: var(--bg-hover); border-radius: 0.25rem;">Enter</kbd> to add
                             </div>
-                            <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition flex items-center">
-                                <i class="fas fa-plus-circle mr-2"></i> Add Task
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus-circle"></i> Add Task
                             </button>
                         </div>
                     </form>
                 </div>
                 
                 <!-- SEARCH & FILTERS -->
-                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-5">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="search" class="block text-sm font-medium mb-1">Search Tasks</label>
-                            <div class="relative">
-                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
-                                <input id="search" placeholder="Type to search..." 
-                                    class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"/>
+                <div class="card">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="search">Search Tasks</label>
+                            <div class="search-container">
+                                <i class="fas fa-search search-icon"></i>
+                                <input id="search" class="search-input" placeholder="Type to search..." />
                             </div>
                         </div>
                         
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Filter Tasks</label>
-                            <div class="flex flex-wrap gap-2">
-                                <button data-filter="all" class="filter px-3 py-2 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-medium">All</button>
-                                <button data-filter="active" class="filter px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Active</button>
-                                <button data-filter="completed" class="filter px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Completed</button>
-                                <button data-filter="high" class="filter px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">High Priority</button>
-                                <button data-filter="today" class="filter px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">Due Today</button>
+                        <div class="form-group">
+                            <label>Filter Tasks</label>
+                            <div class="filter-buttons">
+                                <button data-filter="all" class="filter-btn active">All</button>
+                                <button data-filter="active" class="filter-btn">Active</button>
+                                <button data-filter="completed" class="filter-btn">Completed</button>
+                                <button data-filter="high" class="filter-btn">High Priority</button>
+                                <button data-filter="today" class="filter-btn">Due Today</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- TASKS LIST -->
-                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-5">
+                <div class="card">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold">Your Tasks</h2>
-                        <div class="text-sm text-slate-500">
+                        <h2>Your Tasks</h2>
+                        <div class="text-sm" style="color: var(--text-secondary);">
                             <span id="taskCount">0</span> tasks shown
                         </div>
                     </div>
                     
-                    <div id="dropzone" class="dropzone mb-4">
-                        <i class="fas fa-arrows-alt text-2xl mb-2"></i>
+                    <div id="dropzone" class="dropzone">
+                        <i class="fas fa-arrows-alt"></i>
                         <p>Drag tasks here to reorder</p>
                         <p class="text-xs mt-1">Drop zone will appear when dragging</p>
                     </div>
                     
-                    <ul id="list" class="space-y-3"></ul>
+                    <ul id="list" class="task-list"></ul>
                     
-                    <div id="emptyState" class="text-center py-10">
-                        <i class="fas fa-clipboard-list text-5xl text-slate-300 dark:text-slate-700 mb-4"></i>
-                        <h3 class="text-xl font-medium text-slate-500 dark:text-slate-400 mb-2">No tasks found</h3>
-                        <p class="text-slate-400 dark:text-slate-500">Add a task above or try changing your filters</p>
+                    <div id="emptyState" class="empty-state">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>No tasks found</h3>
+                        <p>Add a task above or try changing your filters</p>
                     </div>
                 </div>
             </div>
         </div>
         
         <!-- FOOTER -->
-        <footer class="mt-8 text-center text-sm text-slate-500 dark:text-slate-400">
+        <footer class="footer">
             <p>Ultimate Todo Pro &copy; 2023 • Data is saved automatically in your browser • 
-                <a href="#" id="clearAllBtn" class="text-red-500 hover:text-red-600 ml-2">Clear All Data</a>
+                <a href="#" id="clearAllBtn">Clear All Data</a>
             </p>
         </footer>
     </div>
@@ -348,8 +916,10 @@
         const themeIcon = document.getElementById("themeIcon");
         
         // Set initial theme
-        document.documentElement.classList.toggle("dark", theme === "dark");
-        themeIcon.className = theme === "dark" ? "fas fa-sun" : "fas fa-moon";
+        if (theme === "dark") {
+            document.body.classList.add("dark-mode");
+            themeIcon.className = "fas fa-sun";
+        }
         
         // Format date for display
         function formatDate(dateString) {
@@ -397,11 +967,11 @@
             
             // Color code progress bar
             if (progress < 30) {
-                progressFill.style.backgroundColor = "#ef4444";
+                progressFill.style.backgroundColor = "var(--danger)";
             } else if (progress < 70) {
-                progressFill.style.backgroundColor = "#f59e0b";
+                progressFill.style.backgroundColor = "var(--warning)";
             } else {
-                progressFill.style.backgroundColor = "#10b981";
+                progressFill.style.backgroundColor = "var(--success)";
             }
         }
         
@@ -453,7 +1023,7 @@
             // Render each todo
             filteredTodos.forEach((todo, index) => {
                 const li = document.createElement("li");
-                li.className = `task-item rounded-lg p-4 ${todo.done ? 'completed-task' : ''} priority-${todo.priority.toLowerCase()} bg-slate-50 dark:bg-slate-700`;
+                li.className = `task-item priority-${todo.priority.toLowerCase()} ${todo.done ? 'completed' : ''}`;
                 li.draggable = true;
                 li.dataset.id = todo.id;
                 
@@ -462,21 +1032,22 @@
                 switch(todo.priority) {
                     case "High": 
                         priorityIcon = "fas fa-exclamation-circle";
-                        priorityColor = "text-red-500";
+                        priorityColor = "var(--danger)";
                         break;
                     case "Medium": 
                         priorityIcon = "fas fa-minus-circle";
-                        priorityColor = "text-amber-500";
+                        priorityColor = "var(--warning)";
                         break;
                     case "Low": 
                         priorityIcon = "fas fa-arrow-down-circle";
-                        priorityColor = "text-green-500";
+                        priorityColor = "var(--success)";
                         break;
                 }
                 
                 // Determine due date status
-                let dateClass = "text-slate-500";
+                let dateClass = "text-muted";
                 let dateIcon = "far fa-calendar";
+                let dateColor = "var(--text-secondary)";
                 
                 if (todo.date) {
                     const today = new Date().toISOString().split('T')[0];
@@ -484,46 +1055,45 @@
                     const now = new Date();
                     
                     if (todo.date < today && !todo.done) {
-                        dateClass = "text-red-500";
+                        dateClass = "text-danger";
                         dateIcon = "fas fa-exclamation-triangle";
+                        dateColor = "var(--danger)";
                     } else if (todo.date === today && !todo.done) {
-                        dateClass = "text-amber-500";
+                        dateClass = "text-warning";
                         dateIcon = "fas fa-clock";
+                        dateColor = "var(--warning)";
                     }
                 }
                 
                 li.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center flex-1">
-                            <div class="mr-3">
-                                <input type="checkbox" ${todo.done ? "checked" : ""} 
-                                    class="h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                    <div class="task-content">
+                        <div class="task-main">
+                            <div class="task-checkbox">
+                                <input type="checkbox" ${todo.done ? "checked" : ""}>
                             </div>
-                            <div class="flex-1">
-                                <div class="flex items-center">
-                                    <span class="${todo.done ? 'line-through text-slate-500' : 'font-medium'}">${todo.text}</span>
-                                    <span class="ml-2 ${priorityColor}">
+                            <div>
+                                <div class="task-title ${todo.done ? 'completed' : ''}">
+                                    ${todo.text}
+                                    <span style="color: ${priorityColor}; margin-left: 0.25rem;">
                                         <i class="${priorityIcon} text-xs"></i>
                                     </span>
                                 </div>
-                                <div class="flex items-center mt-1 text-sm">
-                                    <i class="${dateIcon} mr-1 ${dateClass}"></i>
-                                    <span class="${dateClass} mr-3">${formatDate(todo.date)}</span>
-                                    <span class="text-xs px-2 py-1 rounded-full ${todo.done ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'}">
-                                        ${todo.priority} Priority
-                                    </span>
-                                    ${todo.done ? '<span class="ml-2 text-xs px-2 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">Completed</span>' : ''}
+                                <div class="task-details">
+                                    <i class="${dateIcon}" style="color: ${dateColor}; margin-right: 0.25rem;"></i>
+                                    <span style="color: ${dateColor}; margin-right: 0.5rem;">${formatDate(todo.date)}</span>
+                                    <span class="task-priority">${todo.priority} Priority</span>
+                                    ${todo.done ? '<span class="task-status">Completed</span>' : ''}
                                 </div>
                             </div>
                         </div>
-                        <div class="flex items-center ml-3">
-                            <button class="edit-btn p-2 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600">
+                        <div class="task-actions">
+                            <button class="task-action-btn edit-btn">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="delete-btn p-2 text-slate-500 hover:text-red-600 dark:hover:text-red-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600 ml-1">
+                            <button class="task-action-btn delete-btn">
                                 <i class="fas fa-trash"></i>
                             </button>
-                            <button class="drag-handle p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-lg cursor-move ml-1">
+                            <button class="task-action-btn drag-handle" style="cursor: move;">
                                 <i class="fas fa-grip-vertical"></i>
                             </button>
                         </div>
@@ -562,11 +1132,11 @@
                 // Drag and drop handlers
                 const dragHandle = li.querySelector(".drag-handle");
                 dragHandle.addEventListener("mousedown", () => {
-                    li.classList.add("opacity-50");
+                    li.style.opacity = "0.5";
                 });
                 
                 dragHandle.addEventListener("mouseup", () => {
-                    li.classList.remove("opacity-50");
+                    li.style.opacity = "1";
                 });
                 
                 li.addEventListener("dragstart", handleDragStart);
@@ -716,17 +1286,14 @@
         });
         
         // Filter buttons
-        document.querySelectorAll(".filter").forEach(btn => {
+        document.querySelectorAll(".filter-btn").forEach(btn => {
             btn.addEventListener("click", function() {
                 // Update active filter button
-                document.querySelectorAll(".filter").forEach(b => {
-                    b.classList.remove("bg-blue-100", "dark:bg-blue-900", "text-blue-700", "dark:text-blue-300", "font-medium");
-                    b.classList.add("bg-slate-100", "dark:bg-slate-700", "text-slate-700", "dark:text-slate-300");
+                document.querySelectorAll(".filter-btn").forEach(b => {
+                    b.classList.remove("active");
                 });
                 
-                this.classList.add("bg-blue-100", "dark:bg-blue-900", "text-blue-700", "dark:text-blue-300", "font-medium");
-                this.classList.remove("bg-slate-100", "dark:bg-slate-700", "text-slate-700", "dark:text-slate-300");
-                
+                this.classList.add("active");
                 filter = this.dataset.filter;
                 render();
             });
@@ -818,9 +1385,15 @@
         
         // Theme toggle
         document.getElementById("themeToggle").addEventListener("click", function() {
-            theme = theme === "light" ? "dark" : "light";
-            document.documentElement.classList.toggle("dark");
-            themeIcon.className = theme === "dark" ? "fas fa-sun" : "fas fa-moon";
+            if (theme === "light") {
+                theme = "dark";
+                document.body.classList.add("dark-mode");
+                themeIcon.className = "fas fa-sun";
+            } else {
+                theme = "light";
+                document.body.classList.remove("dark-mode");
+                themeIcon.className = "fas fa-moon";
+            }
             localStorage.setItem("theme", theme);
             showNotification(`Switched to ${theme} theme`, "info");
         });
@@ -923,4 +1496,4 @@
         }
     </script>
 </body>
-</html> this is whole code
+</html>
