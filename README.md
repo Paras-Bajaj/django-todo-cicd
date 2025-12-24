@@ -1,4 +1,4 @@
-End-to-End CI/CD Pipeline for Static Web Application
+End-to-End CI/CD Pipeline for Static Web Application:-
 📋 Project Overview
 This project demonstrates the design and implementation of a complete Continuous Integration and Continuous Deployment (CI/CD) pipeline for a static web application. The pipeline automates the entire software delivery lifecycle from code commit to production deployment using modern DevOps tools and practice.
 
